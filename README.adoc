@@ -1,0 +1,5 @@
+== guestbook-api-server
+
+image:https://travis-ci.org/looztra/guestbook-api-server.svg?branch=master["Build Status", link="https://travis-ci.org/looztra/guestbook-api-server"]
+
+A (very) simple guestbook Rest API
