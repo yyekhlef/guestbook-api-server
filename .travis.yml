@@ -16,5 +16,6 @@ before_install:
 # skip 'mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V'
 install: /bin/true
 
+# start with a simple maven build
 script:
   - mvn clean verify
