@@ -2,7 +2,10 @@ language: java
 #
 # use the container based infra and get benefits of the cache
 #
-sudo: false
+sudo: required
+
+services:
+  - docker
 
 cache:
   directories:
