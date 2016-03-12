@@ -9,6 +9,7 @@
     <modules>
         <module>guestbook-rest-service-api</module>
         <module>guestbook-rest-service-server</module>
+        <module>guestbook-simple-frontend</module>
     </modules>
     <packaging>pom</packaging>
 
