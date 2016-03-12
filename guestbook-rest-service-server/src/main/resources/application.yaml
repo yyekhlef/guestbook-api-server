@@ -1,0 +1,15 @@
+management:
+  context-path: /admin
+
+server:
+  port: 8080
+
+guestbook:
+  backend:
+    redis:
+      read:
+        vip: localhost
+        port: 6379
+      write:
+        vip: localhost
+        port: 6379

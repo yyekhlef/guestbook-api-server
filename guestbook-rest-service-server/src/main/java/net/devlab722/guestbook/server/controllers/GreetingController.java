@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import net.devlab722.guestbook.api.Greeting;
 
 @Controller
-@RequestMapping("/hello-world")
+@RequestMapping("/api/v1/hello-world")
 public class GreetingController {
     private static final String DEFAULT_TEMPLATE = "Hello, %s!";
     private final AtomicLong counter = new AtomicLong();

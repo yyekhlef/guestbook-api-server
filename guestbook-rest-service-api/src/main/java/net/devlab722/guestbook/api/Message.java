@@ -8,21 +8,20 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+
 @Getter
 @EqualsAndHashCode
 @ToString
 @Builder
-@JsonDeserialize(builder = Greeting.GreetingBuilder.class)
-public class Greeting {
-    private final long id;
+@JsonDeserialize(builder = Message.MessageBuilder.class)
+public class Message {
     private final String content;
 
-    public Greeting(long id, String content) {
-        this.id = id;
+    public Message(String content) {
         this.content = content;
     }
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static final class GreetingBuilder {
+    public static final class MessageBuilder {
     }
 }
