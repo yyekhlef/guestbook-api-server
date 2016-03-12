@@ -2,4 +2,15 @@
 
 image:https://travis-ci.org/looztra/guestbook-api-server.svg?branch=master["Build Status", link="https://travis-ci.org/looztra/guestbook-api-server"]
 
-A (very) simple guestbook Rest API
+A (very) simple guestbook relying on a rest api backed by Redis
+
+== Requirements
+
+- docker version >= 1.9
+- docker-compose >= 1.6.0
+
+== How to test
+
+- mvn clean package
+- docker-compose up
+- goto to http://localhost:8081

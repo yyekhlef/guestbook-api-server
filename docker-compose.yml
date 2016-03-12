@@ -1,0 +1,22 @@
+version: '2'
+services:
+  frontend:
+    image: nginx:stable-alpine
+    ports:
+    - "8081:80"
+    volumes:
+    - ./guestbook-simple-frontend/src/main/html:/etc/nginx/html:ro
+    - ./guestbook-simple-frontend/src/main/config/nginx-base.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+    - restserver
+    links:
+    - restserver:guestbook-rest-server
+  restserver:
+    build: ./guestbook-rest-service-server/
+    ports:
+    - "8080:8080"
+    depends_on:
+    - redis
+    command: /app/run-java.sh --guestbook.backend.redis.read.vip=redis --guestbook.backend.redis.write.vip=redis
+  redis:
+    image: redis:3-alpine
