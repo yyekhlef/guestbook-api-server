@@ -4,6 +4,9 @@ language: java
 #
 sudo: required
 
+jdk:
+  - openjdk8
+
 services:
   - docker
 
