@@ -1,0 +1,11 @@
+machine:
+  java:
+    version: oraclejdk8
+
+dependencies:
+  override:
+    - mvn clean
+
+test:
+  override:
+    - mvn package
