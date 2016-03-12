@@ -19,10 +19,10 @@ public class RedisBackend {
 
     @Autowired
     public RedisBackend(
-            @Value("${guestbook.backend.redis.read.vip}") String redisReadVip,
+            @Value("${guestbook.backend.redis.read.vip:localhost}") String redisReadVip,
             @Value("${guestbook.backend.redis.read.port:6379}") int redisReadPort,
-            @Value("${guestbook.backend.redis.write.vip}") String redisWriteVip,
-            @Value("${guestbook.backend.redis.write.port}") int redisWritePort) {
+            @Value("${guestbook.backend.redis.write.vip:localhost}") String redisWriteVip,
+            @Value("${guestbook.backend.redis.write.port:6379}") int redisWritePort) {
         log.info("Initializing Jedis Read with host <{}> and port <{}>", redisReadVip, redisReadPort);
         this.jedisRead = new Jedis(redisReadVip, redisReadPort);
         log.info("Initializing Jedis Write with host <{}> and port <{}>", redisWriteVip, redisWritePort);
@@ -36,5 +36,13 @@ public class RedisBackend {
 
     public List<String> getAllMessages() {
         return jedisRead.lrange("messages", 0, -1);
+    }
+
+    public String pingReadBackend() {
+        return jedisRead.ping();
+    }
+
+    public String pingWriteBackend() {
+        return jedisWrite.ping();
     }
 }
