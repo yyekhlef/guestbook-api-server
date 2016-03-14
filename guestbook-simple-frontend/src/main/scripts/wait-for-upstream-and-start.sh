@@ -6,6 +6,9 @@ target_vip=${TARGET_VIP:-guestbook-rest-server}
 t=0
 resolved=0
 
+echo "Let's wait till DNS resolution is ready (max_wait=${max_wait})"
+echo
+
 while [ $t -lt ${max_wait} ]
 do
    echo $t
@@ -14,6 +17,7 @@ do
       resolved=1
       break
    fi
+   echo
    t=`expr $t + 1`
    sleep 1
 done
@@ -24,6 +28,6 @@ then
     exit 722
 fi
 
-echo "Nice! ${target_vip} is reachable, let's start nginx now"
-nginx -g daemon off;
-
+echo
+echo "w00t w00t!! ${target_vip} is reachable, let's start nginx now"
+nginx -g 'daemon off;'
