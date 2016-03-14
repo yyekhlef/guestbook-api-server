@@ -1,7 +1,8 @@
 package net.devlab722.guestbook.server.controllers;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import net.devlab722.guestbook.api.Message;
+import net.devlab722.guestbook.api.Metadata;
 import net.devlab722.guestbook.server.backend.RedisBackend;
 
 @Controller
@@ -22,19 +24,26 @@ public class GuestBookController {
     @Autowired
     RedisBackend redisBackend;
 
+    private static final String HOSTNAME = System.getenv("HOSTNAME");
+
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> storeMessage(
             @RequestBody(required = false) Message message) {
-        redisBackend.storeMessage(message.getContent());
+        Message augmented = Message.builder()
+                .content(message.getContent())
+                .metadata(Metadata.builder()
+                        .apiServerName(HOSTNAME)
+                        .datetimeString(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
+                        .build())
+                .build();
+        redisBackend.storeMessage(augmented);
         return new ResponseEntity<>(null, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<Message> getMessages() {
-        return redisBackend.getAllMessages().stream()
-                .map(s -> Message.builder().content(s).build())
-                .collect(Collectors.toList());
+        return redisBackend.getAllMessages();
     }
 
 }

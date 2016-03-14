@@ -8,18 +8,17 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-
 @Getter
 @EqualsAndHashCode
 @ToString
 @Builder
-@JsonDeserialize(builder = Message.MessageBuilder.class)
-public class Message {
-    private final String content;
-    private final String userName;
-    private final Metadata metadata;
+@JsonDeserialize(builder = Metadata.MetadataBuilder.class)
+public class Metadata {
+
+    private final String apiServerName;
+    private final String datetimeString;
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static final class MessageBuilder {
+    public static final class MetadataBuilder {
     }
 }

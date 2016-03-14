@@ -1,12 +1,20 @@
 package net.devlab722.guestbook.server.backend;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.extern.slf4j.Slf4j;
+import net.devlab722.guestbook.api.Jackson;
+import net.devlab722.guestbook.api.Message;
+import net.devlab722.guestbook.server.errors.BadRequestException;
 import redis.clients.jedis.Jedis;
 
 @Component
@@ -16,6 +24,7 @@ public class RedisBackend {
 
     private Jedis jedisRead;
     private Jedis jedisWrite;
+    private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
 
     @Autowired
     public RedisBackend(
@@ -30,12 +39,28 @@ public class RedisBackend {
     }
 
 
-    public void storeMessage(String message) {
-        jedisWrite.lpush("messages", message);
+    public void storeMessage(Message message) {
+        try {
+            jedisWrite.lpush("messages", MAPPER.writeValueAsString(message));
+        } catch (JsonProcessingException e) {
+            throw new BadRequestException(
+                    "Caught JsonProcessingException while parsing Message [" + message + "]", e);
+        }
     }
 
-    public List<String> getAllMessages() {
-        return jedisRead.lrange("messages", 0, -1);
+    public List<Message> getAllMessages() {
+
+        return jedisRead.lrange("messages", 0, -1)
+                .stream()
+                .map(s -> {
+                    try {
+                        return MAPPER.readValue(s, Message.class);
+                    } catch (IOException e) {
+                        throw new BadRequestException(
+                                "Caught IOException while parsing String [" + s + "]", e);
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     public String pingReadBackend() {
