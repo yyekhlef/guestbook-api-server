@@ -1,0 +1,65 @@
+console:
+  labels:
+    io.rancher.container.pull_image: always
+  tty: true
+  command:
+  - ash
+  image: alpine
+  links:
+  - rest-server:guestbook-rest-server
+  stdin_open: true
+guestbook-rest-service-server:
+  labels:
+    io.rancher.container.pull_image: always
+  tty: true
+  command:
+  - /app/run-java.sh
+  - --guestbook.backend.redis.read.vip=redis-slave
+  - --guestbook.backend.redis.write.vip=redis-master
+  image: looztra/guestbook-rest-service-server:v0.0.1
+  links:
+  - redis-master:redis-master
+  - redis-slave:redis-slave
+  stdin_open: true
+redis-slave:
+  labels:
+    io.rancher.container.pull_image: always
+  tty: true
+  command:
+  - redis-server
+  - --slaveof
+  - redis-master
+  - '6379'
+  image: redis:3-alpine
+  links:
+  - 'redis-master:'
+  stdin_open: true
+rest-server:
+  image: rancher/dns-service
+  links:
+  - guestbook-rest-service-server:guestbook-rest-service-server
+redis-master:
+  labels:
+    io.rancher.container.pull_image: always
+  tty: true
+  image: redis:3-alpine
+  stdin_open: true
+frontend:
+  labels:
+    io.rancher.container.pull_image: always
+  tty: true
+  image: looztra/guestbook-frontend:v0.0.7
+  links:
+  - rest-server:guestbook-rest-server
+  stdin_open: true
+lb-guestbook-frontend:
+  ports:
+  - 80:80
+  labels:
+    io.rancher.scheduler.global: 'true'
+    io.rancher.loadbalancer.target.frontend: guestbook.in.devlab722.net:80=80
+  tty: true
+  image: rancher/load-balancer-service
+  links:
+  - frontend:frontend
+  stdin_open: true
