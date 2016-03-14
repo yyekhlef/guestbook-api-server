@@ -3,7 +3,8 @@ MAINTAINER Christophe Furmaniak <christophe.furmaniak@gmail.com>
 
 ENV AB_OF= \
     JAVA_APP_DIR=/usr/local/appli \
-    JAVA_APP_NAME=guestbook-rest-service-server
+    JAVA_APP_NAME=guestbook-rest-service-server \
+    LOOZ_VERSION=v0.0.2
 
 LABEL DOCKERFILE_PATH=/usr/local/appli/Dockerfile
 
