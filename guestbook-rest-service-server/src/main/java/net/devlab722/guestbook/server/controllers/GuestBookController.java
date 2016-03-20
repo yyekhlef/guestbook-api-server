@@ -27,9 +27,10 @@ public class GuestBookController {
     private static final String HOSTNAME = System.getenv("HOSTNAME");
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> storeMessage(
+    public ResponseEntity<Message> storeMessage(
             @RequestBody(required = false) Message message) {
         Message augmented = Message.builder()
+                .userName(message.getUserName())
                 .content(message.getContent())
                 .metadata(Metadata.builder()
                         .apiServerName(HOSTNAME)
@@ -37,7 +38,7 @@ public class GuestBookController {
                         .build())
                 .build();
         redisBackend.storeMessage(augmented);
-        return new ResponseEntity<>(null, HttpStatus.CREATED);
+        return new ResponseEntity<>(augmented, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
