@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  vars:
+    tmp_directory: target
+    droplet_ids_file: droplets_ids.txt
+    droplet_ips_file: droplets_ips.txt
+    droplet_infos_file: droplets_infos.txt
+
+  tasks:
+  - name: delete droplets
+    digital_ocean:
+      state: absent
+      command: droplet
+      id: "{{ item | int }}"
+      wait_timeout: 500
+    with_lines: "cat {{ tmp_directory }}/{{ droplet_ids_file }}"

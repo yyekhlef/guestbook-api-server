@@ -1,0 +1,102 @@
+---
+- hosts: localhost
+  vars:
+    tmp_directory: target
+    droplet_ids_file: droplets_ids.txt
+    droplet_ips_file: droplets_ips.txt
+    droplet_infos_file: droplets_infos.txt
+    rancher_group_id: x
+    rancher_nb_hosts: 4
+  tasks:
+  - name: create tmp directory
+    file: dest="{{ tmp_directory }}" state=directory
+    tags:
+    - prepare
+
+  - name: create rancher-ui droplet
+    digital_ocean:
+      state: present
+      command: droplet
+      name: "rancher-ui-{{ rancher_group_id }}"
+      size_id: 2gb
+      region_id: ams2
+      image_id: docker
+      ssh_key_ids: "{{ lookup('env', 'DO_SSH_KEY_IDS') }}"
+      wait_timeout: 500
+      unique_name: yes
+    register: rancher_ui_output
+    tags:
+    - rancher-ui
+
+  - name: output rancher-ui droplet id
+    lineinfile:
+      state: present
+      line: "{{ rancher_ui_output.droplet.id }}"
+      create: yes
+      dest: "{{ tmp_directory }}/{{ droplet_ids_file }}"
+    tags:
+    - rancher-ui
+
+  - name: output rancher-ui droplet ip
+    lineinfile:
+      state: present
+      line: "{{ rancher_ui_output.droplet.ip_address }}"
+      create: yes
+      dest: "{{ tmp_directory }}/{{ droplet_ips_file }}"
+    tags:
+    - rancher-ui
+
+  - name: output rancher-ui droplet infos
+    lineinfile:
+      state: present
+      line: "rancher-ui-{{ rancher_group_id }}:{{ rancher_ui_output.droplet.id }}:{{ rancher_ui_output.droplet.ip_address }}"
+      create: yes
+      dest: "{{ tmp_directory }}/{{ droplet_infos_file }}"
+    tags:
+    - rancher-ui
+
+  - name: create rancher-hosts
+    digital_ocean:
+      state: present
+      command: droplet
+      name: "rancher-host-{{ rancher_group_id }}-{{ item }}"
+      size_id: 4gb
+      region_id: ams2
+      image_id: docker
+      ssh_key_ids: "{{ lookup('env', 'DO_SSH_KEY_IDS') }}"
+      wait_timeout: 500
+      unique_name: yes
+    with_sequence: count="{{ rancher_nb_hosts}}"
+    register: rancher_hosts_output
+    tags:
+    - rancher-hosts
+
+  - name: output rancher-hosts droplet id
+    lineinfile:
+      state: present
+      line: "{{ item.droplet.id }}"
+      create: yes
+      dest: "{{ tmp_directory }}/{{ droplet_ids_file }}"
+    with_items: "{{ rancher_hosts_output.results }}"
+    tags:
+    - rancher-hosts
+
+  - name: output rancher-ui droplet ip
+    lineinfile:
+      state: present
+      line: "{{ item.droplet.ip_address }}"
+      create: yes
+      dest: "{{ tmp_directory }}/{{ droplet_ips_file }}"
+    with_items: "{{ rancher_hosts_output.results }}"
+    tags:
+    - rancher-hosts
+
+  - name: output rancher-ui droplet infos
+    lineinfile:
+      state: present
+      line: "rancher-host-{{ rancher_group_id }}-{{ item.0 }}:{{ item.1.droplet.id }}:{{ item.1.droplet.ip_address }}"
+      create: yes
+      dest: "{{ tmp_directory }}/{{ droplet_infos_file }}"
+    with_indexed_items: "{{ rancher_hosts_output.results }}"
+    tags:
+    - rancher-hosts
