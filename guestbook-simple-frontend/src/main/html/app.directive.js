@@ -30,7 +30,8 @@ function AppController($http) {
     this.version = "unknown";
     var self = this;
     $http.get("/api/v1/guestbook/messages")
-        .then(function (response) {
+        .then(
+            function (response) {
                 console.log("[/guestbook/messages] status code: " + response.status);
                 console.log("[/guestbook/messages] received " + response.data.length + " elements");
                 self.messages = response.data;
@@ -41,10 +42,11 @@ function AppController($http) {
             });
 
     $http.get("/api/v1/version")
-        .then(function (response) {
-            console.log("[/version] status code: " + response.status);
-            self.version = response.data.version;
-        });
+        .then(
+            function (response) {
+                console.log("[/version] status code: " + response.status);
+                self.version = response.data.version;
+            });
 
     this.storeInBackend = function () {
         console.log("storeInBackend: got content [" + this.msg + "] and userName[" + this.userName + "]");
@@ -55,9 +57,11 @@ function AppController($http) {
         this.msg = "";
         this.userName = "";
         $http.post("/api/v1/guestbook/messages", postBody)
-            .then(angular.bind(this, function (data, status) {
-                    this.messages.unshift(data);
-                }), function (response) {
+            .then(
+                function (response) {
+                    self.messages.unshift(response.data);
+                },
+                function (response) {
                     console.log("[/guestbook/messages] status code: " + response.status);
                     self.backendResponse = "Houston, something went wrong while storing to the backend";
                 }
