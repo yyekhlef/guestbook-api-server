@@ -1,16 +1,6 @@
-console:
+service-guestbook-api-server:
   labels:
-    io.rancher.container.pull_image: always
-  tty: true
-  command:
-  - ash
-  image: alpine
-  links:
-  - rest-server:guestbook-rest-server
-  stdin_open: true
-guestbook-rest-service-server:
-  labels:
-    io.rancher.container.pull_image: always
+    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=default/service-guestbook-api-server
   tty: true
   command:
   - /app/run-java.sh
@@ -18,9 +8,22 @@ guestbook-rest-service-server:
   - --guestbook.backend.redis.write.vip=redis-master
   image: looztra/guestbook-rest-service-server:v0.0.1
   links:
-  - redis-master:redis-master
-  - redis-slave:redis-slave
+  - 'redis-master:'
+  - 'redis-slave:'
   stdin_open: true
+service-guestbook-frontend:
+  labels:
+    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=default/service-guestbook-frontend
+    io.rancher.container.pull_image: always
+  tty: true
+  image: looztra/guestbook-frontend:v0.0.7
+  links:
+  - alias-guestbook-api-server:guestbook-rest-server
+  stdin_open: true
+alias-guestbook-api-server:
+  image: rancher/dns-service
+  links:
+  - service-guestbook-api-server:service-guestbook-api-server
 redis-slave:
   labels:
     io.rancher.container.pull_image: always
@@ -34,32 +37,13 @@ redis-slave:
   links:
   - 'redis-master:'
   stdin_open: true
-rest-server:
-  image: rancher/dns-service
-  links:
-  - guestbook-rest-service-server:guestbook-rest-service-server
 redis-master:
   labels:
     io.rancher.container.pull_image: always
   tty: true
   image: redis:3-alpine
   stdin_open: true
-frontend:
-  labels:
-    io.rancher.container.pull_image: always
-  tty: true
-  image: looztra/guestbook-frontend:v0.0.7
+alias-guestbook-frontend:
+  image: rancher/dns-service
   links:
-  - rest-server:guestbook-rest-server
-  stdin_open: true
-lb-guestbook-frontend:
-  ports:
-  - 80:80
-  labels:
-    io.rancher.scheduler.global: 'true'
-    io.rancher.loadbalancer.target.frontend: guestbook.in.devlab722.net:80=80
-  tty: true
-  image: rancher/load-balancer-service
-  links:
-  - frontend:frontend
-  stdin_open: true
+  - service-guestbook-frontend:service-guestbook-frontend
