@@ -1,13 +1,13 @@
 service-guestbook-api-server:
   scale: 2
-  health_check:
-    port: 8080
-    interval: 2000
-    unhealthy_threshold: 3
-    strategy: none
-    request_line: GET /admin/health "HTTP/1.0"
-    healthy_threshold: 2
-    response_timeout: 2000
+#  health_check:
+#    port: 8080
+#    interval: 2000
+#    unhealthy_threshold: 3
+#    strategy: none
+#    request_line: GET /admin/health "HTTP/1.0"
+#    healthy_threshold: 2
+#    response_timeout: 2000
 service-guestbook-frontend:
   scale: 2
 redis-slave:
