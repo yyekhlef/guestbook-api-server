@@ -1,5 +1,7 @@
 ---
 - hosts: localhost
+  connection: local
+  gather_facts: False
   vars:
     tmp_directory: target
     droplet_ids_file: droplets_ids.txt
