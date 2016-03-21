@@ -1,6 +1,6 @@
 service-guestbook-api-server:
   labels:
-    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=default/service-guestbook-api-server
+    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
   tty: true
   command:
   - /app/run-java.sh
@@ -13,7 +13,7 @@ service-guestbook-api-server:
   stdin_open: true
 service-guestbook-frontend:
   labels:
-    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=default/service-guestbook-frontend
+    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
     io.rancher.container.pull_image: always
   tty: true
   image: looztra/guestbook-frontend:v0.0.7
@@ -27,6 +27,7 @@ alias-guestbook-api-server:
 redis-slave:
   labels:
     io.rancher.container.pull_image: always
+    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
   tty: true
   command:
   - redis-server
