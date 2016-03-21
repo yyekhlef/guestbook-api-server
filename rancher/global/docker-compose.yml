@@ -1,0 +1,21 @@
+guestbook-tmp-lb:
+  ports:
+  - 9000:80
+  external_links:
+  - default/alias-guestbook-frontend:alias-guestbook-frontend
+  labels:
+    io.rancher.scheduler.global: 'true'
+  tty: true
+  image: rancher/load-balancer-service
+  stdin_open: true
+loadbalancer-global:
+  ports:
+  - 80:80
+  external_links:
+  - default/alias-guestbook-frontend:alias-guestbook-frontend
+  labels:
+    io.rancher.loadbalancer.target.default/alias-guestbook-frontend: guestbook.in.devlab722.net
+    io.rancher.scheduler.global: 'true'
+  tty: true
+  image: rancher/load-balancer-service
+  stdin_open: true
