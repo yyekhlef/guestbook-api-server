@@ -8,8 +8,8 @@ service-guestbook-api-server:
   - --guestbook.backend.redis.write.vip=redis-master
   image: looztra/guestbook-rest-service-server:v0.0.1
   links:
-  - 'redis-master:'
-  - 'redis-slave:'
+  - redis-master:redis-master
+  - redis-slave:redis-slave
   stdin_open: true
 service-guestbook-frontend:
   labels:
@@ -35,7 +35,7 @@ redis-slave:
   - '6379'
   image: redis:3-alpine
   links:
-  - 'redis-master:'
+  - redis-master:redis-master
   stdin_open: true
 redis-master:
   labels:
