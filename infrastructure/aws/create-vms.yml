@@ -1,0 +1,37 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  vars:
+    tmp_directory: target
+    ec2_infos_file: ec2_infos.txt
+    ami_id: ami-e1398992
+
+  tasks:
+  - name: create tmp directory
+    file: dest="{{ tmp_directory }}" state=directory
+    tags:
+    - prepare
+
+  - name: Provision a set of instances
+    ec2:
+      key_name: "{{ lookup('env', 'AWS_KEY_NAME') }}"
+      region: eu-west-1
+      group: ffa
+      instance_type: t2.medium
+      image: "{{ ami_id }}"
+      wait: true
+      exact_count: 3
+      count_tag:
+        Name: cfk-rancher-breizhcamp
+      instance_tags:
+        Name: cfk-rancher-breizhcamp
+    register: ec2
+
+  - name: output ec2 vm infos
+    lineinfile:
+      state: present
+      line: "{{ item.public_ip }}"
+      create: yes
+      dest: "{{ tmp_directory }}/{{ ec2_infos_file }}"
+    with_items: ec2.instances

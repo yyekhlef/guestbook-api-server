@@ -1,0 +1,14 @@
+- hosts: ec2hosts
+  name: configuration play
+  sudo: yes
+  gather_facts: true
+
+  tasks:
+  - name: Install docker
+    yum: name=docker state=present
+
+  - name: Install docker
+    service: name=docker state=started
+
+  - name: Ensure user ec2-user is part of the docker group
+    user: name=ec2-user groups=docker
