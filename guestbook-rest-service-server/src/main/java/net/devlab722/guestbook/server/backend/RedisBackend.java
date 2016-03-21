@@ -56,8 +56,10 @@ public class RedisBackend {
                     try {
                         return MAPPER.readValue(s, Message.class);
                     } catch (IOException e) {
-                        throw new BadRequestException(
-                                "Caught IOException while parsing String [" + s + "]", e);
+                        // deal with v0.0.1 message format
+                        return Message.builder()
+                                .content(s)
+                                .build();
                     }
                 })
                 .collect(Collectors.toList());
