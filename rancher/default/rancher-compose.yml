@@ -1,4 +1,4 @@
-service-guestbook-api-server:
+service-guestbook-api-server-blue:
   scale: 2
 #  health_check:
 #    port: 8080
@@ -8,7 +8,7 @@ service-guestbook-api-server:
 #    request_line: GET /admin/health "HTTP/1.0"
 #    healthy_threshold: 2
 #    response_timeout: 2000
-service-guestbook-frontend:
+service-guestbook-frontend-blue:
   scale: 2
 redis-slave:
   scale: 2

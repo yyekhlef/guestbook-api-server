@@ -1,4 +1,4 @@
-service-guestbook-api-server:
+service-guestbook-api-server-blue:
   labels:
     io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
   tty: true
@@ -11,7 +11,7 @@ service-guestbook-api-server:
   - redis-master:redis-master
   - redis-slave:redis-slave
   stdin_open: true
-service-guestbook-frontend:
+service-guestbook-frontend-blue:
   labels:
     io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
     io.rancher.container.pull_image: always
@@ -23,7 +23,7 @@ service-guestbook-frontend:
 alias-guestbook-api-server:
   image: rancher/dns-service
   links:
-  - service-guestbook-api-server:service-guestbook-api-server
+  - service-guestbook-api-server-blue:service-guestbook-api-server-blue
 redis-slave:
   labels:
     io.rancher.container.pull_image: always
@@ -47,4 +47,4 @@ redis-master:
 alias-guestbook-frontend:
   image: rancher/dns-service
   links:
-  - service-guestbook-frontend:service-guestbook-frontend
+  - service-guestbook-frontend-blue:service-guestbook-frontend-blue
