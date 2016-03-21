@@ -16,7 +16,7 @@ service-guestbook-frontend:
     io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
     io.rancher.container.pull_image: always
   tty: true
-  image: looztra/guestbook-frontend:v0.0.7
+  image: looztra/guestbook-frontend:v0.0.7-hack
   links:
   - alias-guestbook-api-server:guestbook-rest-server
   stdin_open: true
