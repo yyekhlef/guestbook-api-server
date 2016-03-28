@@ -1,0 +1,81 @@
+redis-master:
+  labels:
+    io.rancher.container.pull_image: always
+    io.rancher.scheduler.affinity:host_label: tier=middle
+  tty: true
+  image: redis:3-alpine
+  stdin_open: true
+redis-slave:
+  labels:
+    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+    io.rancher.container.pull_image: always
+    io.rancher.scheduler.affinity:host_label: tier=middle
+  tty: true
+  command:
+  - redis-server
+  - --slaveof
+  - redis-master
+  - '6379'
+  image: redis:3-alpine
+  links:
+  - 'redis-master:'
+  stdin_open: true
+service-guestbook-api-server:
+  labels:
+    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+    io.rancher.container.pull_image: always
+    io.rancher.scheduler.affinity:host_label: tier=middle
+    io.rancher.container.hostname_override: container_name
+  tty: true
+  command:
+  - /app/run-java.sh
+  - --guestbook.backend.redis.read.vip=redis-slave
+  - --guestbook.backend.redis.write.vip=redis-master
+  image: looztra/guestbook-rest-service-server:v0.0.6
+  links:
+  - 'redis-master:'
+  - 'redis-slave:'
+  stdin_open: true
+service-guestbook-filter-server:
+  labels:
+    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+    io.rancher.container.pull_image: always
+    io.rancher.container.start_once: 'true'
+    io.rancher.scheduler.affinity:host_label: tier=middle
+    io.rancher.container.hostname_override: container_name
+  tty: true
+  image: looztra/guestbook-filter-server:v0.0.1
+  stdin_open: true
+service-guestbook-gateway-server:
+  labels:
+    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+    io.rancher.container.pull_image: always
+    io.rancher.scheduler.affinity:host_label: tier=middle
+    io.rancher.container.hostname_override: container_name
+  tty: true
+  command:
+  - /app/run-java.sh
+  - --guestbook.gateway.filter.endPointsAsString=10.42.9.168:8080,10.42.240.40:8080
+  - --guestbook.gateway.api-server.endPointsAsString=10.42.54.30:8080,10.42.71.158:8080
+  image: looztra/guestbook-api-gateway-server:v0.0.1
+  links:
+  - 'service-guestbook-api-server:'
+  stdin_open: true
+alias-guestbook-api-server:
+  image: rancher/dns-service
+  links:
+  - service-guestbook-gateway-server:service-guestbook-gateway-server
+service-guestbook-frontend:
+  labels:
+    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+    io.rancher.container.pull_image: always
+    io.rancher.scheduler.affinity:host_label: tier=front
+  tty: true
+  image: looztra/guestbook-frontend:v0.0.10-hack
+  links:
+  - service-guestbook-gateway-server:guestbook-rest-server
+  stdin_open: true
+alias-guestbook-frontend:
+  image: rancher/dns-service
+  links:
+  - service-guestbook-frontend:service-guestbook-frontend

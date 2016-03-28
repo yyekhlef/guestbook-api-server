@@ -1,0 +1,12 @@
+service-guestbook-api-server:
+  scale: 2
+service-guestbook-frontend:
+  scale: 2
+service-guestbook-gateway-server:
+  scale: 2
+redis-slave:
+  scale: 2
+service-guestbook-filter-server:
+  scale: 2
+redis-master:
+  scale: 1

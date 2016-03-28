@@ -1,0 +1,41 @@
+lb-api-server:
+  ports:
+  - 9002:8080
+  external_links:
+  - Default/service-guestbook-api-server:service-guestbook-api-server
+  labels:
+    io.rancher.scheduler.affinity:host_label: tier=front
+  tty: true
+  image: rancher/load-balancer-service
+  stdin_open: true
+lb-filter-server:
+  ports:
+  - 9001:8080
+  external_links:
+  - Default/service-guestbook-filter-server:service-guestbook-filter-server
+  labels:
+    io.rancher.scheduler.affinity:host_label: tier=front
+  tty: true
+  image: rancher/load-balancer-service
+  stdin_open: true
+lb-gateway-server:
+  ports:
+  - 9000:8080
+  external_links:
+  - Default/service-guestbook-gateway-server:service-guestbook-gateway-server
+  labels:
+    io.rancher.scheduler.affinity:host_label: tier=front
+  tty: true
+  image: rancher/load-balancer-service
+  stdin_open: true
+lb-guestbook-frontend:
+  ports:
+  - 80:80
+  external_links:
+  - Default/alias-guestbook-frontend:alias-guestbook-frontend
+  labels:
+    io.rancher.loadbalancer.target.Default/alias-guestbook-frontend: guestbook.in.devlab722.net:80=80
+    io.rancher.scheduler.affinity:host_label: tier=front
+  tty: true
+  image: rancher/load-balancer-service
+  stdin_open: true
