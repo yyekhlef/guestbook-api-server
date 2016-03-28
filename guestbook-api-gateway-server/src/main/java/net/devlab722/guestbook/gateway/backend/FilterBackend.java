@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.common.collect.Maps;
+import com.netflix.client.DefaultLoadBalancerRetryHandler;
+import com.netflix.client.RetryHandler;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.reactive.LoadBalancerCommand;
@@ -22,6 +24,10 @@ public class FilterBackend {
 
     private final RestTemplate restTemplate;
 
+    // https://github.com/Netflix/ribbon/blob/master/ribbon-core/src/main/java/com/netflix/client/DefaultLoadBalancerRetryHandler.java
+    // retrySameServer=0, retryNextServer=1, retryEnabled=true
+    public static final RetryHandler DEFAULT_RETRY_HANDLER = new DefaultLoadBalancerRetryHandler(0, 1, true);
+
     @Autowired
     FilterBackend(FilterBackendLoadBalancer loadBalancerConfiguration, RestTemplate restTemplate) {
         this.loadBalancer = loadBalancerConfiguration.getLoadBalancer();
@@ -35,6 +41,7 @@ public class FilterBackend {
     public Observable<ResponseEntity<Message>> rxFilter(Message input) {
         return LoadBalancerCommand.<ResponseEntity<Message>>builder()
                 .withLoadBalancer(loadBalancer)
+                .withRetryHandler(DEFAULT_RETRY_HANDLER)
                 .build()
                 .submit(server -> Observable.just(callRemoteService(input, server)));
     }
