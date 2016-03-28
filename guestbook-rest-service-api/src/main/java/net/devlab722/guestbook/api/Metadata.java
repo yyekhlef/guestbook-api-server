@@ -17,6 +17,8 @@ public class Metadata {
 
     private final String apiServerName;
     private final String datetimeString;
+    private final String filterServerName;
+    private final String filterDatetimeString;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static final class MetadataBuilder {

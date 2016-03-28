@@ -27,11 +27,12 @@ public class GuestBookController {
     private static final String HOSTNAME = System.getenv("HOSTNAME");
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Message> storeMessage(
-            @RequestBody(required = false) Message message) {
+    public ResponseEntity<Message> storeMessage(@RequestBody(required = false) Message message) {
         Message augmented = Message.builder()
                 .userName(message.getUserName())
                 .content(message.getContent())
+                .originalContent(message.getOriginalContent())
+                .filtered(message.isFiltered())
                 .metadata(Metadata.builder()
                         .apiServerName(HOSTNAME)
                         .datetimeString(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))

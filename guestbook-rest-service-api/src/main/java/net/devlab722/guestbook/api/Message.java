@@ -17,6 +17,8 @@ import lombok.ToString;
 public class Message {
     private final String content;
     private final String userName;
+    private final String originalContent;
+    private final boolean filtered;
     private final Metadata metadata;
 
     @JsonPOJOBuilder(withPrefix = "")
