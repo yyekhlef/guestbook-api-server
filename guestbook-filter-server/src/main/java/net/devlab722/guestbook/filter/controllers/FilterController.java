@@ -19,6 +19,6 @@ public class FilterController {
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Message> storeMessage(@RequestBody(required = false) Message message) {
-        return new ResponseEntity<>(filterBackend.filter(message), HttpStatus.CREATED);
+        return new ResponseEntity<>(filterBackend.filter(message), HttpStatus.OK);
     }
 }

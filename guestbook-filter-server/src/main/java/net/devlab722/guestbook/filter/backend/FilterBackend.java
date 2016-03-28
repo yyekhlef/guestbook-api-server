@@ -19,12 +19,11 @@ public class FilterBackend {
 
     public Message filter(Message input) {
         ContentFilter.FilteredMessage filteredMessage = contentFilter.filterIfNeeded(input.getContent());
-        return Message.builder()
-                .userName(input.getUserName())
+        return Message.of(input)
                 .content(filteredMessage.getContent())
                 .originalContent(input.getContent())
                 .filtered(filteredMessage.isFiltered())
-                .metadata(Metadata.builder()
+                .metadata(Metadata.of(input.getMetadata())
                         .filterServerName(HOSTNAME)
                         .filterDatetimeString(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build())

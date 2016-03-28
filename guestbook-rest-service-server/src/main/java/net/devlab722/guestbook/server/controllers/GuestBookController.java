@@ -27,17 +27,14 @@ public class GuestBookController {
     private static final String HOSTNAME = System.getenv("HOSTNAME");
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Message> storeMessage(@RequestBody(required = false) Message message) {
-        Message augmented = Message.builder()
-                .userName(message.getUserName())
-                .content(message.getContent())
-                .originalContent(message.getOriginalContent())
-                .filtered(message.isFiltered())
-                .metadata(Metadata.builder()
+    public ResponseEntity<Message> storeMessage(@RequestBody(required = true) Message message) {
+        Message augmented = Message.of(message).metadata(
+                Metadata.of(
+                        message.getMetadata())
                         .apiServerName(HOSTNAME)
                         .datetimeString(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
-                        .build())
-                .build();
+                        .build()
+        ).build();
         redisBackend.storeMessage(augmented);
         return new ResponseEntity<>(augmented, HttpStatus.CREATED);
     }

@@ -18,8 +18,21 @@ public class Message {
     private final String content;
     private final String userName;
     private final String originalContent;
-    private final boolean filtered;
+    private boolean filtered = false;
     private final Metadata metadata;
+
+    public static MessageBuilder of(Message original) {
+        if (original != null) {
+            return Message.builder()
+                    .content(original.getContent())
+                    .filtered(original.isFiltered())
+                    .userName(original.getUserName())
+                    .originalContent(original.getOriginalContent())
+                    .metadata(original.getMetadata());
+        } else {
+            return Message.builder();
+        }
+    }
 
     @JsonPOJOBuilder(withPrefix = "")
     public static final class MessageBuilder {

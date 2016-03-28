@@ -25,6 +25,7 @@ public class RedisBackend {
     private Jedis jedisRead;
     private Jedis jedisWrite;
     private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
+    public static final int MAX_RETURNED_MESSAGES = 100;
 
     @Autowired
     public RedisBackend(
@@ -50,7 +51,7 @@ public class RedisBackend {
 
     public List<Message> getAllMessages() {
 
-        return jedisRead.lrange("messages", 0, -1)
+        return jedisRead.lrange("messages", 0, MAX_RETURNED_MESSAGES)
                 .stream()
                 .map(s -> {
                     try {
