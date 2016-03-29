@@ -26,7 +26,7 @@ public class FilterBackend {
 
     // https://github.com/Netflix/ribbon/blob/master/ribbon-core/src/main/java/com/netflix/client/DefaultLoadBalancerRetryHandler.java
     // retrySameServer=0, retryNextServer=1, retryEnabled=true
-    public static final RetryHandler DEFAULT_RETRY_HANDLER = new DefaultLoadBalancerRetryHandler(0, 1, true);
+    public static final RetryHandler DEFAULT_RETRY_HANDLER = new DefaultLoadBalancerRetryHandler(1, 1, true);
 
     @Autowired
     FilterBackend(FilterBackendLoadBalancer loadBalancerConfiguration, RestTemplate restTemplate) {
