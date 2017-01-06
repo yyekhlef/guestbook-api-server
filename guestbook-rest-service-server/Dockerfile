@@ -1,4 +1,4 @@
-FROM fabric8/java-alpine-openjdk8-jdk
+FROM fabric8/java-alpine-openjdk8-jdk:1.2.1
 MAINTAINER Christophe Furmaniak <christophe.furmaniak@gmail.com>
 
 ENV AB_OF= \

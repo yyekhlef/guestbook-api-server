@@ -17,6 +17,6 @@ services:
     - "8080:8080"
     depends_on:
     - redis
-    command: /app/run-java.sh --guestbook.backend.redis.read.vip=redis --guestbook.backend.redis.write.vip=redis
+    command: /deployments/run-java.sh --guestbook.backend.redis.read.vip=redis --guestbook.backend.redis.write.vip=redis
   redis:
     image: redis:3-alpine
