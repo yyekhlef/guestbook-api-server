@@ -12,7 +12,7 @@ import net.devlab722.guestbook.api.Message;
 import net.devlab722.guestbook.filter.backend.FilterBackend;
 
 @Controller
-@RequestMapping(path = "/api/v1/sanity/filter")
+@RequestMapping(path = "/api/v1/filter/sanitize")
 public class FilterController {
     @Autowired
     FilterBackend filterBackend;

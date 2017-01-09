@@ -3,6 +3,7 @@ package net.devlab722.guestbook.gateway.backend;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +25,10 @@ import rx.Observable;
 
 @Component
 public class ApiBackend {
+
+    @Value("${guestbook.messages.url:/api/v1/guestbook/messages}")
+    public String guestbookMessagesUrl;
+
     private final ILoadBalancer loadBalancer;
 
     private final RestTemplate restTemplate;
@@ -42,10 +47,6 @@ public class ApiBackend {
         this.restTemplate = restTemplate;
     }
 
-    public ResponseEntity<Message> blockingStore(Message input) {
-        return rxStore(input).toBlocking().first();
-    }
-
     public Observable<ResponseEntity<Message>> rxStore(Message input) {
         return LoadBalancerCommand
                 .<ResponseEntity<Message>>builder()
@@ -59,7 +60,7 @@ public class ApiBackend {
 
     ResponseEntity<Message> callRemoteStoreService(Message message, Server server) {
         return restTemplate.exchange(
-                "http://" + server.getHost() + ":" + server.getPort() + "/api/v1/guestbook/messages",
+                "http://" + server.getHost() + ":" + server.getPort() + guestbookMessagesUrl,
                 HttpMethod.POST,
                 new HttpEntity<>(message),
                 Message.class,
@@ -81,7 +82,7 @@ public class ApiBackend {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
         return restTemplate.exchange(
-                "http://" + server.getHost() + ":" + server.getPort() + "/api/v1/guestbook/messages",
+                "http://" + server.getHost() + ":" + server.getPort() + guestbookMessagesUrl,
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
                 LIST_OF_MESSAGES_TYPE_REF,

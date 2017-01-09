@@ -22,9 +22,9 @@ public class ApiBackendLoadBalancer {
 
     @Autowired
     ApiBackendLoadBalancer(
-            @Value("${guestbook.gateway.api-server.endPointsAsString}") String endPointsAsString) {
+            @Value("${gateway.guestbook.endPointsAsString}") String endPointsAsString) {
         ImmutableSet<EndPoint> endPoints = ImmutableSet.copyOf(
-                new LoadBalancerConfiguration(endPointsAsString, "guestbook.gateway.api-server.endPointsAsString")
+                new LoadBalancerConfiguration(endPointsAsString, "gateway.guestbook.endPointsAsString")
                         .getEndPoints());
         List<Server> serverList = endPoints.stream()
                 .map(e -> new Server(e.getHost(), e.getPort()))

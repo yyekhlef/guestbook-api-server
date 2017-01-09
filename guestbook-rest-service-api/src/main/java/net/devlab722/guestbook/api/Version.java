@@ -15,6 +15,9 @@ import lombok.ToString;
 @JsonDeserialize(builder = Version.VersionBuilder.class)
 public class Version {
     private final String version;
+    private final String gateway;
+    private final String filter;
+    private final String guestbook;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static final class VersionBuilder {

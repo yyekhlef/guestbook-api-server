@@ -3,3 +3,6 @@ management:
 
 server:
   port: 8080
+
+filter:
+  version: 1.0

@@ -58,7 +58,7 @@ function AppController($http, configuration) {
         };
         this.msg = "";
         this.userName = "";
-        $http.post("/api/v1/guestbook/messages", postBody)
+        $http.post(apiServerRootUrl + "/api/v1/guestbook/messages", postBody)
             .then(
                 function (response) {
                     self.messages.unshift(response.data);

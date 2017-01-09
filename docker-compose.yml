@@ -7,16 +7,30 @@ services:
     volumes:
     - ./guestbook-simple-frontend/src/main/html:/etc/nginx/html:ro
     - ./guestbook-simple-frontend/src/main/config/nginx-base.conf:/etc/nginx/nginx.conf:ro
+  gatewayserver:
+    build: ./guestbook-api-gateway-server/
+    ports:
+    - "8080:8080"
+    environment:
+      GATEWAY_GUESTBOOK_ENDPOINTSASSTRING: "restserver:8080"
+      GATEWAY_FILTER_ENDPOINTSASSTRING: "filterserver:8080"
+#    command: /deployments/run-java.sh --gateway.guestbook.endPointsAsString=restserver:8080 --gateway.filter.endPointsAsString=filterserver:8080
     depends_on:
     - restserver
-    links:
-    - restserver:guestbook-rest-server
+    - filterserver
   restserver:
     build: ./guestbook-rest-service-server/
     ports:
-    - "8080:8080"
+    - "8085:8080"
+    environment:
+      GUESTBOOK_BACKEND_REDIS_READ_VIP: redis
+      GUESTBOOK_BACKEND_REDIS_WRITE_VIP: redis
     depends_on:
     - redis
-    command: /deployments/run-java.sh --guestbook.backend.redis.read.vip=redis --guestbook.backend.redis.write.vip=redis
+#    command: /deployments/run-java.sh --guestbook.backend.redis.read.vip=redis --guestbook.backend.redis.write.vip=redis
+  filterserver:
+    build: ./guestbook-filter-server/
+    ports:
+    - "8086:8080"
   redis:
     image: redis:3-alpine

@@ -22,9 +22,9 @@ public class FilterBackendLoadBalancer {
 
     @Autowired
     FilterBackendLoadBalancer(
-            @Value("${guestbook.gateway.filter.endPointsAsString}") String endPointsAsString) {
+            @Value("${gateway.filter.endPointsAsString}") String endPointsAsString) {
         ImmutableSet<EndPoint> endPoints = ImmutableSet.copyOf(
-                new LoadBalancerConfiguration(endPointsAsString, "guestbook.gateway.filter.endPointsAsString")
+                new LoadBalancerConfiguration(endPointsAsString, "gateway.filter.endPointsAsString")
                         .getEndPoints());
         List<Server> serverList = endPoints.stream()
                 .map(e -> new Server(e.getHost(), e.getPort()))
