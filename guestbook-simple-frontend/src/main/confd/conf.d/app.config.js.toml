@@ -1,0 +1,6 @@
+[template]
+src = 'app.config.js.tmpl'
+dest = '/etc/nginx/html/config/app.config.js'
+keys = [
+'/guestbook',
+]

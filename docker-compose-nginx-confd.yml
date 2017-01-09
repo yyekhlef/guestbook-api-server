@@ -1,0 +1,33 @@
+version: '2'
+services:
+  frontend:
+    image: looztra/guestbook-simple-frontend:0.5.0-confd
+    ports:
+    - "8081:80"
+    environment:
+      GUESTBOOK_FRONTEND_API_SERVER_ROOT_URL: http://localhost:8080
+  gatewayserver:
+    build: ./guestbook-api-gateway-server/
+    ports:
+    - "8080:8080"
+    environment:
+      GATEWAY_GUESTBOOK_ENDPOINTSASSTRING: "restserver:8080"
+      GATEWAY_FILTER_ENDPOINTSASSTRING: "filterserver:8080"
+    depends_on:
+    - restserver
+    - filterserver
+  restserver:
+    build: ./guestbook-rest-service-server/
+    ports:
+    - "8085:8080"
+    environment:
+      GUESTBOOK_BACKEND_REDIS_READ_VIP: redis
+      GUESTBOOK_BACKEND_REDIS_WRITE_VIP: redis
+    depends_on:
+    - redis
+  filterserver:
+    build: ./guestbook-filter-server/
+    ports:
+    - "8086:8080"
+  redis:
+    image: redis:3-alpine
