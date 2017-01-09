@@ -1,0 +1,40 @@
+version: '2'
+services:
+  filter:
+    image: looztra/guestbook-filter:0.5.0-no-confd
+    stdin_open: true
+    tty: true
+    labels:
+      io.rancher.container.pull_image: always
+  service-server:
+    image: looztra/guestbook-service-server:0.5.0-no-confd
+    environment:
+      GUESTBOOK_BACKEND_REDIS_READ_VIP: redis
+      GUESTBOOK_BACKEND_REDIS_WRITE_VIP: redis
+    stdin_open: true
+    tty: true
+    labels:
+      io.rancher.container.pull_image: always
+  redis:
+    image: redis:3-alpine
+    stdin_open: true
+    tty: true
+    labels:
+      io.rancher.container.pull_image: always
+  gateway:
+    image: looztra/guestbook-gateway:0.5.0-no-confd
+    environment:
+      GATEWAY_GUESTBOOK_ENDPOINTSASSTRING: service-server:8080
+      GATEWAY_FILTER_ENDPOINTSASSTRING: filter:8080
+    stdin_open: true
+    tty: true
+    labels:
+      io.rancher.container.pull_image: always
+  frontend:
+    image: looztra/guestbook-simple-frontend:0.5.0-confd
+    environment:
+      GUESTBOOK_FRONTEND_API_SERVER_ROOT_URL: http://guestbook-no-confd.api.wip.kalaari.net
+    stdin_open: true
+    tty: true
+    labels:
+      io.rancher.container.pull_image: always

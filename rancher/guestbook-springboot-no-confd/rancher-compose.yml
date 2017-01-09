@@ -1,0 +1,17 @@
+version: '2'
+services:
+  filter:
+    scale: 1
+    start_on_create: true
+  service-server:
+    scale: 1
+    start_on_create: true
+  redis:
+    scale: 1
+    start_on_create: true
+  gateway:
+    scale: 1
+    start_on_create: true
+  frontend:
+    scale: 1
+    start_on_create: true
