@@ -12,5 +12,6 @@ COPY src/main/confd/templates/* /etc/confd/templates/
 COPY target/confd src/main/scripts/startup.sh /usr/local/bin/
 
 RUN  chmod +x /usr/local/bin/confd /usr/local/bin/startup.sh
+VOLUME /etc/nginx/html
 
 CMD "/usr/local/bin/startup.sh"
