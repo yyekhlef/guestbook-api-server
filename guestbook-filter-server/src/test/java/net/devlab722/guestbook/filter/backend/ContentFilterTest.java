@@ -10,6 +10,8 @@ public class ContentFilterTest {
 
     @DataProvider(name = "dataProviderFor_testFilterIfNeeded")
     public Object[][] dataProviderFor_testFilterIfNeeded() {
+        FilterDefinition filterDefinition = new FilterDefinition(null, "mouarf");
+        ContentFilter contentFilter = new ContentFilter(filterDefinition);
         return new Object[][]{
                 {"vive les microservices",
                         "vive les beeeeep", true},
@@ -26,14 +28,25 @@ public class ContentFilterTest {
                 {"vive les micro services",
                         "vive les micro services", false},
                 {"",
-                        ContentFilter.EMPTY_MESSAGE_COUNTER_MEASURE, true}
+                        filterDefinition.getEmptyMessageCounterMeasure(), true}
         };
     }
 
     @Test(dataProvider = "dataProviderFor_testFilterIfNeeded")
     public void testFilterIfNeeded(String input, String expectedContentValue, boolean expectedFilteredValue) {
-        ContentFilter.FilteredMessage filteredMessage = new ContentFilter().filterIfNeeded(input);
+        ContentFilter.FilteredMessage filteredMessage = new ContentFilter(new FilterDefinition(null, "mouarf")).filterIfNeeded(input);
         assertThat(filteredMessage.getContent()).isEqualTo(expectedContentValue);
         assertThat(filteredMessage.isFiltered()).isEqualTo(expectedFilteredValue);
+    }
+
+    @Test
+    public void testFilterIfNeededWithNonDefaultBuzzWords() {
+        FilterDefinition filterDefinition =
+                new FilterDefinition("src/test/resources/filterDefinition.properties", "mouarf");
+        ContentFilter.FilteredMessage filteredMessage =
+                new ContentFilter(filterDefinition)
+                        .filterIfNeeded("vive les microservices");
+        assertThat(filteredMessage.getContent()).isEqualTo("vive les beeeeep bouia!");
+        assertThat(filteredMessage.isFiltered()).isEqualTo(true);
     }
 }

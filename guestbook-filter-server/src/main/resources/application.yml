@@ -1,8 +1,15 @@
 management:
   context-path: /admin
+  security:
+    enabled: false
 
 server:
   port: 8080
 
 filter:
   version: 1.0
+  definition:
+    filename: filterDefinition.properties
+  empty:
+    message:
+      feedback: I hate emtpy strings!
